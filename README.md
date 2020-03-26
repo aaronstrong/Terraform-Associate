@@ -358,7 +358,7 @@ module "consul" {
 * ~> 1.2: any non-beta version >= 1.2.0 and < 2.0.0, e.g. 1.X.Y 
 * >= 1.0.0, <= 2.0.0: any version between 1.0.0 and 2.0.0 inclusive 
 
-# 6 Navigate Terraform workflow
+# 6 Navigate Terraform workflow <a name="Workflow"></a>
 ## a. Describe Terraform workflow ( Write -> Plan -> Create )
 
 Terraform workflow has three steps:
@@ -424,7 +424,7 @@ By default, `apply` scans the current directory for the configuration and applie
 
 `terraform destory` command is used to destroy the Terraform managed infrastructure. Infrastructure managed by Terraform will be destroyed. This will ask for confirmation before destroying.
 
-# 7 Implement and maintain state
+# 7 Implement and maintain state <a name="State"></a>
 ## a. Describe default local backend
 
 ## b. Outline state locking
@@ -439,10 +439,35 @@ By default, `apply` scans the current directory for the configuration and applie
 
 ## g. Understand secret management in state files
 
-# 8 Read, generate, and modify configuration
+Terraform state can contain sensitive data. The state contains resource IDs and all resource attributes. When using local state, state is stored in plain-text JSON files. when using remote state, state is only ever held in memory when used by Terraform. It may be encypted at rest, but this depends on the remote state backend.
+
+### <b>Recommendations</b>
+Storing state remotely can provide better security. Terraform does not persist state to the local disk when remote state is in use, and some backends can be configured to encrypt the state data at rest.
+* <u>Terraform Cloud</U> always encrypts state at rest and protects it with TLS in transit. Terraform cloud also knows the identity of the user requesting state and maintains a history of state changes. This can be used to control access and track activity. Terraform Enterprise also supports detailed audit logging.
+* The S3 backend supports encryption at rest when enabled. IAM policies and logging can be used to identity any invalid access. Requests for the state go over a TLS connection.
+
+# 8 Read, generate, and modify configuration <a name="Config"></a>
 ## a.Demonstrate use of variables and outputs
 
 ## b.Describe secure secret injection best practice
+
+The Vault provider allows Terraform to read from, write to, and configure HashiCorp Vault.
+
+**IMPORTANT:** Interacting with Vault from Terraform causes any secrets that you read and write to be persisted in both Terraform's state file <i>and</i> in any generated plan files. For any Terraform modules that reads or writes Vault secrets, these files should be treated as sensitive and protected.
+
+### <b>Best Practices</b>
+
+Recommend to avoid placing secrets in your Terraform config or state file wherever possible, and if placed there, ou take steps to reduce and manage your risk. 
+
+### Configure and Populating Vault
+
+Terraform can be used b the Vault administrator to configure Vault and populate it with secrets. In this case, the state and any plans associated with the configuration must be stored and communicated with care, since they will contain in cleartext any values that were writte into Vault.
+
+Terraform has no mechanism to redact or protect secrets that are provided via configuration, so teams choosing to use Terraform for populating Vault secrets should pay careful attention to the notes on each resource's documentation page about how any secrets are persisted to the state and consider carefully whether such usage is compatible with the security policies.
+
+### Using Vault Credentials in Terraform Configuration
+
+Most Terraform providers require credentials to interact iwth a third-party service that they wrap. This provider allows such credentials to be obtained from Vault, which means that operators or systems running Terraform need only access to a suitably-privileged Vault token in order to temp. lease the credentials for other providers. <u>Terraform has no mechanism to redact or protect secrets that are returned via data sources, so secrets read via this provider will be persisted into the Terraform state, into any plan files, and in some cases in the console output produced while planning and applyin.</u>
 
 ## c.Understand the use of collection and structural types
 
@@ -456,7 +481,7 @@ By default, `apply` scans the current directory for the configuration and applie
 
 ## h. Describe built-in dependency management (order of execution based)
 
-# 9 Understand Terraform Enterprise capabilities
+# 9 Understand Terraform Enterprise capabilities <a name="TFE"></a>
 
 ## a. Describe the benefits of Sentinel, Registry, and Workspaces
 * <b>Sentinel</b> - Policy as code framework by Hashicorp. A policy-oriented language to write policies, and integrates with TFE and Nomad Enterprise for enforcement.
