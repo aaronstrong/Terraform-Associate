@@ -483,13 +483,14 @@ Most Terraform providers require credentials to interact iwth a third-party serv
 
 # 9 Understand Terraform Enterprise capabilities <a name="TFE"></a>
 
+
 ## a. Describe the benefits of Sentinel, Registry, and Workspaces
 * <b>Sentinel</b> - Policy as code framework by Hashicorp. A policy-oriented language to write policies, and integrates with TFE and Nomad Enterprise for enforcement.
 * <b>Module Registry</b> - Terraform cloud's private module registry to share TF modules across organization. Support for module versioning, search and fitlerable list of available modules and a configuration designer.
 * <b>Workspaces</b> - Terraform Cloud manages infrastructure collections with <i>workspaces</i> instead of directories. A workspace contains everyting Terraform needs to managed a given collection of infrastructure.
 
 <b>NOTE:</b> Terraform CLI workspaces alternate state files in the same working directory; they're a convenience feature for using one configuration to manage multiple similar groups of resources.
-
+It offers enterprises a private instance of the Terraform Cloud application, with no resource limits and with additional enterprise-grade architectural features like audit logging and SAML single sign-on
 ### Workspace Contents
 Terraform Cloud workspaces and local working directories serve the same purpose, but they store their data differently:
 
