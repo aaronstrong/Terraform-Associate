@@ -483,14 +483,48 @@ Most Terraform providers require credentials to interact iwth a third-party serv
 
 # 9 Understand Terraform Enterprise capabilities <a name="TFE"></a>
 
+Understand that there are three different offerings.
+* OSS CLI, which is a free and open source production. This is what individuals and small teams use first to get accustom to Terraform.
+* Terraform Cloud allows for some extra features noted below, but also allows for better team collaboration and extends the use of Terraform to other teams and departments.
+* Terraform Enterprise offers everything in Terraform Cloud, but a way to install in the local datacenter for airgap purpose and additional enterprise features like auditing and SSO integration.
 
-## a. Describe the benefits of Sentinel, Registry, and Workspaces
-* <b>Sentinel</b> - Policy as code framework by Hashicorp. A policy-oriented language to write policies, and integrates with TFE and Nomad Enterprise for enforcement.
-* <b>Module Registry</b> - Terraform cloud's private module registry to share TF modules across organization. Support for module versioning, search and fitlerable list of available modules and a configuration designer.
-* <b>Workspaces</b> - Terraform Cloud manages infrastructure collections with <i>workspaces</i> instead of directories. A workspace contains everyting Terraform needs to managed a given collection of infrastructure.
+| CLI | Terraform Cloud | Terraform Enterprise |
+|------|-------------------|----------------------|
+| VCS Integration | VCS Integration | VCS Integration |
+| Workspace Management | Workspace Management | Workspace Management |
+| Secure Variable Storage | Secure Variable Storage | Secure Variable Storage |
+| Remote Runs & Applies |  Remote Runs & Applies |  Remote Runs & Applies |
+| Full API Coverage |  Full API Coverage |  Full API Coverage |
+| Private Module Registry | Private Module Registry | Private Module Registry |
+|   | Roles / Team Management | Roles / Team Management |
+|   | Sentinel (paid) | Sentinel |
+|   | Cost Estimation | Cost Estimation |
+|   |    | <b>SAML / SSO</b> |
+|   |    | <b>Clustering</b> |
+|   |    | Private DC Installation |
+|   |    | Private Network Connectivity |
+|   |    | Self-Hosted |
+|   |    | <b>Audit Logs</b> |
 
-<b>NOTE:</b> Terraform CLI workspaces alternate state files in the same working directory; they're a convenience feature for using one configuration to manage multiple similar groups of resources.
-It offers enterprises a private instance of the Terraform Cloud application, with no resource limits and with additional enterprise-grade architectural features like audit logging and SAML single sign-on
+## a. Terraform Cloud Overview
+
+Terraform Cloud is a platform that performs Terraform runs to provision infrastructure, either on demand or in response to various events. Unlike a general-purpose continuous integration (CI) system, it is deeply integrated with Terraform's workflows and data, which allows it to make Terraform significantly more convenient and powerful.
+
+### VCS Integration
+
+VCS, version control system, provides additional features and improved workflows like:
+* TF cloud can automatically initiate Terraform runs when a change is committed.
+* TF Cloud makes code review easier by automaticaly predicting how pull requests will affect infrastructure.
+* Publish new versions of a private Terraform module by pushing a tag to the mod's repo.
+
+| Supported VCS Providers |  |
+| ------------------------|---|
+| Github.com | Github.com (OAuth) |
+| Github Enterprise | GitLab.com |
+| GitLab EE and CE | Bitbucket Cloud |
+| Bitbucket Server | Azure DevOps Serve | 
+| Azure DevOps Services|  |
+
 ### Workspace Contents
 Terraform Cloud workspaces and local working directories serve the same purpose, but they store their data differently:
 
@@ -499,7 +533,94 @@ Terraform Cloud workspaces and local working directories serve the same purpose,
 | Terraform configuration | On disk                                                     | In linked version control repository, or periodically uploaded via API/CLI |
 | Variable values         | As .tfvars files, as CLI arguments, or in shell environment | In workspace                                                               |
 | State                   | On disk or in remote backend                                | In workspace                                                               |
-| Credentials and secrets | In shell environment or entered at prompts                  | In workspace, stored as sensitive variables                                |
+| Credentials and secrets | In shell environment or entered at prompts                  | In workspace, stored as sensitive variables |
+
+### Private Module Registry
+
+Terraform Cloud's private module registry helps you share Terraform modules across your organization. It includes support for module versioning, a searchable and filterable list of available modules, and a configuration designer to help you build new workspaces faster. Works a lot like the public Terraform registry.
+
+### Sentinel Overview
+
+Sentinel is an embedded policy-as-code framework integrated with the HashiCorp Enterprise products. It enables fine-grained, logic-based policy decisions, and can be extended to use information from external sources.
+
+### Cost Estimation
+
+Terraform Cloud provides cost estimates for many resources found in your Terraform configuration. For each resource an hourly and monthly cost is shown, along with the monthly delta. The total cost and delta of all estimable resources is also shown.
+
+Cost estimations are supported for <b>AWS, GCP and Azure</b>.
+
+## b. Terraform Enterprise Overview
+
+Terraform Enterprise is a self-hosted distribution of Terraform Cloud. It offers enterprises a private instance of the Terraform Cloud application, with no resource limits and with additional enterprise-grade architectural features like audit logging and SAML single sign-on.
+
+### <u>Deployment Method</u>
+
+There are two ways to install TFE
+
+1. <b>Cluster Deployment</b> Deploy TFE as a cluster of three or more instances (+100) using a Terraform module. The cluster's secondary insances can scale horizontally to fit your workloads.
+1. <b>Individual Deployment</b> Deploy TE directly on a Linux instance using an executable installer.
+
+### Data Storage
+
+Make sure your data storage services or device meet Terraform Enterprise's requirements. These requirements differ based on operational mode:
+
+* <b>External Services:</b>
+
+  * PostgreSQL
+  * Any S3-compatible object storage service (Azure Blob). Create bucket before install and specifcy bucket during installation. Be sure to put bucket in same region as instance.
+  * Optionally: If already running Vault, configure TFE to use that instead of running its own Vault instance.
+
+* <b>Mounted disk:</b>
+  
+  * Mounted disk requirements
+
+    * If you choose "Production - Mounted disk" operational mode, Terraform Enterprise will manage its own PostgreSQL database and object storage using a separate directory on the host
+
+### Linux Instance
+
+| Cluster Deployment | Individual Deployment |
+| -------------------| ----------------------|
+| Ubuntu 16.04 / 18.04 | Debian 7.7+ |
+| Red Hat Enterprise 7.4-7.7 | Ubuntu 14.04/16.04/18.04 |
+| CentOS 7.4 - 7.7 | RHEL 7.4 - 7.7 |
+|  | CentOS 6.x / 7.4 - 7.7 |
+|  | Amazon Linux Distro |
+|  | Oracle Linux 7.4 - 7.7 |
+
+### Hardware Requirements
+
+| Hardware |
+| ---------|
+| At least 40GB of disk space on root volume |
+| At least 8GB of RAM |
+| At least 2 CPU cores |
+
+### <u>Architecture of Cluster Deployment</u>
+
+A Terraform Enterprise cluster consists of two types of servers: primaries and secondaries (also called workers). The primary instances run additional, stateful services that the secondaries do not.
+
+There should always be three primary nodes to ensure cluster stability, but the cluster can scale by adding or removing secondary nodes.
+
+Clustered deployment relies on a Terraform module to provision infrastructure. Cluster size is controlled by the module's input variables, and the number of secondary instances can be changed at any time by editing the variables and re-applying the configuration
+
+### Load Balancing
+
+A Terraform Enterprise cluster relies on a load balancer to direct traffic to application instances.
+
+### Data Storage
+
+Clustered deployment is designed for use with external data services. These include a PostgreSQL database and a blob storage service.
+
+
+
+## a. Describe the benefits of Sentinel, Registry, and Workspaces
+* <b>Sentinel</b> - Policy as code framework by Hashicorp. A policy-oriented language to write policies, and integrates with TFE and Nomad Enterprise for enforcement.
+* <b>Module Registry</b> - Terraform cloud's private module registry to share TF modules across organization. Support for module versioning, search and fitlerable list of available modules and a configuration designer.
+* <b>Workspaces</b> - Terraform Cloud manages infrastructure collections with <i>workspaces</i> instead of directories. A workspace contains everyting Terraform needs to managed a given collection of infrastructure.
+
+<b>NOTE:</b> Terraform CLI workspaces alternate state files in the same working directory; they're a convenience feature for using one configuration to manage multiple similar groups of resources.
+
+
 
 Terraform Cloud keep some additional data for each workspace:
 * <b>State Versions</b> - Each workspace retains backups of its previous state files
@@ -509,4 +630,24 @@ Terraform Cloud keep some additional data for each workspace:
 * CLI Workspaces
 * Enterprise / Cloud Workspaces
 ## c. Summarize features of Terraform Cloud
-* Terraform Cloud
+
+## Overview of Terraform Cloud
+
+Terraform Cloud is offered as a multi-tenant SaaS platform and is deisgned to suit the needs of smaller teams and organizations. It is limited to one run at a time, which prevents users from executing multiple run concurrently.
+
+**The Application**
+Terraform cloud located at https://app.terraform.io, provides a UI and API to manage Terraform projects. Manageds projects in terms of organizations and workspaces:
+
+* <b>Workspace</b> is a named container for a single timeline of Terraform state, used to manage a collection of infrastructure resources over time. Each workspace belongs to an org, and only members of that org can acces it.
+* <b>Organization</b> is a group of users who can collaborate on a shared set of workspaces. An organizations is created by an initial user, who can then add others.
+
+**Features**
+
+Terraform cloud offers free and paid for features.
+
+ * Integrate with most popular version control systems.
+ * Manage your project's state, including state locking.
+ * Plan and apply configuration changes from within the Terraform Cloud UI.
+ * Securely store variables, including secret values.
+ * Store and use private Terraform modules.
+ * Collaborate with other users.
