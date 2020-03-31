@@ -426,8 +426,17 @@ By default, `apply` scans the current directory for the configuration and applie
 
 # 7 Implement and maintain state <a name="State"></a>
 ## a. Describe default local backend
+A "backend" in Terraform determines how state is loaded and how an operation such as apply is executed. This abstraction enables non-local file state storage, remote execution, etc. By default, Terraform uses the "local" backend.
+
+**Benefits of remote backends**
+* Working in a team: Backends can store state remotely and protect the state with lcoks to prevent corruption.
+* Keep sensitive information off disk.
 
 ## b. Outline state locking
+
+Terraform will lock your state for all operations that could write state. This prevents others from acquiring the lock and potentially corrupting your state. Happens automatically on all operations that could write state. If state locking fails, Terraform will not continue. Disable by using command `-lock` but not recommended.
+
+You may use `force-unlock command` to manually unlock the state if unlocking failed.
 
 ## c. Handle backend authentication methods
 
@@ -440,6 +449,8 @@ By default, `apply` scans the current directory for the configuration and applie
 ## g. Understand secret management in state files
 
 Terraform state can contain sensitive data. The state contains resource IDs and all resource attributes. When using local state, state is stored in plain-text JSON files. when using remote state, state is only ever held in memory when used by Terraform. It may be encypted at rest, but this depends on the remote state backend.
+
+Terraform Cloud always encrypts state at rest and protects it with TLS in transit. Terraform Cloud also knows the identity of the user requesting state and maintains a history of state changes. Terraform Enterprise also supports detailed audit logging.
 
 ### <b>Recommendations</b>
 Storing state remotely can provide better security. Terraform does not persist state to the local disk when remote state is in use, and some backends can be configured to encrypt the state data at rest.
