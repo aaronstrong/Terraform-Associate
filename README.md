@@ -507,7 +507,7 @@ Understand that there are three different offerings.
 | Remote Runs & Applies |  Remote Runs & Applies | Remote Runs & Applies | Remote Runs & Applies |
 | Full API Coverage |  Full API Coverage | Full API Coverage | Full API Coverage | 
 | Private Module Registry | Private Module Registry | Private Module Registry | Private Module Registry |
-|   | Roles / Team Management | Roles / Team Management | Roles / Team Management |
+| ~~Roles / Team Management~~  | Roles / Team Management | Roles / Team Management | Roles / Team Management |
 |   |  | Sentinel | Sentinel |
 |   |  | Cost Estimation | Cost Estimation |
 |   |  |  | SAML / SSO |
