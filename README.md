@@ -508,14 +508,14 @@ Understand that there are three different offerings.
 | Full API Coverage |  Full API Coverage | Full API Coverage | Full API Coverage | 
 | Private Module Registry | Private Module Registry | Private Module Registry | Private Module Registry |
 | ~~Roles / Team Management~~  | Roles / Team Management | Roles / Team Management | Roles / Team Management |
-|   |  | Sentinel | Sentinel |
-|   |  | Cost Estimation | Cost Estimation |
-|   |  |  | SAML / SSO |
-|   |  |  | Clustering |
-|   |  |  | Private DC Installation |
-|   |  |  | Private Network Connectivity |
-|   |  |  | Self-Hosted |
-|   |  |  | Audit Logs |
+| ~~Sentinel~~ | ~~Sentinel~~ | Sentinel | Sentinel |
+| ~~Cost Estimation~~ | ~~Cost Estimation~~ | Cost Estimation | Cost Estimation |
+| ~~SAML / SSO~~  | ~~SAML / SSO~~ | ~~SAML / SSO~~ | SAML / SSO |
+| ~~Clustering~~  | ~~Clustering~~ | ~~Clustering~~ | Clustering |
+| ~~Private DC Installation~~  | ~~Private DC Installation~~ | ~~Private DC Installation~~ | Private DC Installation |
+| ~~Private Network Connectivity~~   | ~~Private Network Connectivity~~  | ~~Private Network Connectivity~~  | Private Network Connectivity |
+| ~~Self-Hosted~~  | ~~Self-Hosted~~ | ~~Self-Hosted~~ | Self-Hosted |
+| ~~Audit Logs~~  | ~~Audit Logs~~ | ~~Audit Logs~~ | Audit Logs |
 
 ## a. Terraform Cloud Overview
 
