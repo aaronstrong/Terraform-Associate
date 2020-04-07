@@ -9,7 +9,7 @@
 8. [Read, generate, and modify configuration](#Config)
 9. [Understand Terraform Enterprise](#TFE)
 
-Index. https://learn.hashicorp.com/terraform/certification/terraform-associate
+Terraform Associate Blue Print: https://learn.hashicorp.com/terraform/certification/terraform-associate
 
 # 1. Understand IaC concepts <a name="IaC"></a>
 ## a. Explain what is IaC
