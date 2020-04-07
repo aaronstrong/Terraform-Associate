@@ -499,7 +499,7 @@ Understand that there are three different offerings.
 * Terraform Cloud allows for some extra features noted below, but also allows for better team collaboration and extends the use of Terraform to other teams and departments.
 * Terraform Enterprise offers everything in Terraform Cloud, but a way to install in the local datacenter for airgap purpose and additional enterprise features like auditing and SSO integration.
 
-| CLI | Terraform Cloud Free | Terraform Cloud | Team Terraform Enterprise |
+| TFC Free | TFC Team $20/u/m | TFC Governance $70/u/m| Team Terraform Enterprise |
 |-----|----------------------|-----------------| --------------------------|
 | VCS Integration | VCS Integration | VCS Integration | VCS Integration |
 | Workspace Management | Workspace Management | Workspace Management | Workspace Management |
@@ -507,15 +507,15 @@ Understand that there are three different offerings.
 | Remote Runs & Applies |  Remote Runs & Applies | Remote Runs & Applies | Remote Runs & Applies |
 | Full API Coverage |  Full API Coverage | Full API Coverage | Full API Coverage | 
 | Private Module Registry | Private Module Registry | Private Module Registry | Private Module Registry |
-|   |  | Roles / Team Management | Roles / Team Management |
+|   | Roles / Team Management | Roles / Team Management | Roles / Team Management |
 |   |  | Sentinel | Sentinel |
 |   |  | Cost Estimation | Cost Estimation |
-|   |  |  | <b>SAML / SSO</b> |
-|   |  |  | <b>Clustering</b> |
+|   |  |  | SAML / SSO |
+|   |  |  | Clustering |
 |   |  |  | Private DC Installation |
 |   |  |  | Private Network Connectivity |
 |   |  |  | Self-Hosted |
-|   |  |  | <b>Audit Logs</b> |
+|   |  |  | Audit Logs |
 
 ## a. Terraform Cloud Overview
 
